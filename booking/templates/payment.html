@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UPI Payment</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+    body {
+        height: 100vh;
+        background: linear-gradient(135deg, #d9c7ff, #b8a2ff);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Segoe UI';
+    }
+
+    .card {
+        width: 350px;
+        padding: 25px;
+        border-radius: 20px;
+        background: #f5f0ff;
+    }
+
+    .btn-purple {
+        background: #6f42c1;
+        color: white;
+        border-radius: 10px;
+    }
+
+    /* overlay */
+    .overlay {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .d-none {
+        display: none;
+    }
+
+    .box {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+    }
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #eee;
+        border-top: 5px solid purple;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
+    </style>
+</head>
+
+<body>
+
+<!-- MAIN CARD -->
+<div class="card text-center shadow">
+
+    <h4>PhonePe UPI</h4>
+
+    <p class="fw-bold">{{ slot.turf.name }}</p>
+    <p class="text-muted">{{ slot.date }} | {{ slot.time }}</p>
+
+    <!-- PRICE -->
+    <p>💸 Price per hour: <b>₹{{ price }}</b></p>
+
+    <!-- PLAYERS INPUT -->
+    <input type="number" id="players" class="form-control mb-3"
+        placeholder="Enter number of players"
+        min="1" max="{{ max_players }}">
+
+    <small>Max allowed: {{ max_players }}</small>
+
+    <!-- TOTAL -->
+    <h3 id="total" style="color: green;">₹0</h3>
+
+    <hr>
+
+    <!-- QR -->
+    <img width="140"
+    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay">
+
+    <hr>
+
+    <!-- BUTTON -->
+    <button id="payBtn" class="btn btn-purple w-100">Pay Securely 💸</button>
+
+</div>
+
+<!-- LOADING -->
+<div id="loader" class="overlay d-none">
+    <div class="box text-center">
+        <div class="spinner"></div>
+        <p>Processing payment...</p>
+    </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="success" class="overlay d-none">
+    <div class="box text-center">
+        <svg width="70" viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="25" fill="green"/>
+            <path d="M14 27 L22 35 L38 18" stroke="white" stroke-width="4" fill="none"/>
+        </svg>
+        <h4 class="text-success mt-3">Payment Successful</h4>
+        <p>Booking Confirmed 🎉</p>
+    </div>
+</div>
+
+<script>
+const price = Number("{{ price|default:0 }}");
+const maxPlayers = Number("{{ max_players|default:10 }}");
+
+const input = document.getElementById("players");
+const totalBox = document.getElementById("total");
+
+// calculate price
+input.addEventListener("input", function() {
+    let players = parseInt(this.value) || 0;
+
+    if (players > maxPlayers) {
+        alert("Max allowed is " + maxPlayers);
+        this.value = maxPlayers;
+        players = maxPlayers;
+    }
+
+    if (players > 0) {
+        totalBox.innerText = "₹" + price;
+    } else {
+        totalBox.innerText = "₹0";
+    }
+});
+
+// payment button
+document.getElementById("payBtn").addEventListener("click", function(){
+
+    // show loader
+    document.getElementById("loader").classList.remove("d-none");
+
+    setTimeout(() => {
+
+        // hide loader
+        document.getElementById("loader").classList.add("d-none");
+
+        // show success
+        document.getElementById("success").classList.remove("d-none");
+
+        setTimeout(() => {
+            window.location.href = "/confirm-payment/{{ slot.id }}/";
+        }, 2000);
+
+    }, 2000);
+
+});
+</script>
+
+</body>
+</html>

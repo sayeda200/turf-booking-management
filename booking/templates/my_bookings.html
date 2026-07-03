@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>My Bookings</title>
+
+```
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    body {
+        background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+    }
+
+    .card {
+        border-radius: 15px;
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<!-- 🔔 Notification -->
+
+{% if messages %}
+{% for message in messages %} <div id="msg" class="alert alert-{{ message.tags }} text-center">
+{{ message }} </div>
+{% endfor %}
+{% endif %}
+
+<script>
+setTimeout(() => {
+    let msg = document.getElementById('msg');
+    if(msg){ msg.style.display = 'none'; }
+}, 3000);
+</script>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">📅 My Bookings</h2>
+
+```
+{% for booking in bookings %}
+<div class="card p-3 mb-3 shadow d-flex flex-row align-items-center justify-content-between">
+
+    <!-- LEFT SIDE -->
+    <div>
+        <h5>{{ booking.slot.turf.name }}</h5>
+        <p>{{ booking.slot.date }} - {{ booking.slot.time }}</p>
+
+        <!-- 📌 DATE STATUS -->
+        {% if booking.slot.date == today %}
+            <span class="badge bg-primary">Today</span>
+        {% elif booking.slot.date > today %}
+            <span class="badge bg-success">Upcoming</span>
+        {% endif %}
+
+        <!-- ✅ BOOKING STATUS -->
+        <p class="mt-2">
+            Status:
+            {% if booking.status == "confirmed" %}
+                <span class="badge bg-success">Confirmed</span>
+            {% else %}
+                <span class="badge bg-danger">Cancelled</span>
+            {% endif %}
+        </p>
+
+        <!-- 💸 REFUND MESSAGE -->
+        {% if booking.status == "cancelled" %}
+            <p class="text-danger">💸 Amount Refunded</p>
+        {% endif %}
+    </div>
+
+    <!-- RIGHT SIDE (BUTTON) -->
+    <div>
+        {% if booking.status == "confirmed" %}
+            <a class="btn btn-danger"
+               href="/cancel/{{ booking.id }}"
+               onclick="return confirm('Are you sure you want to cancel this booking?')">
+               Cancel ❌
+            </a>
+        {% else %}
+            <span class="badge bg-secondary">No Action</span>
+        {% endif %}
+    </div>
+
+</div>
+
+{% empty %}
+    <p class="text-center">No bookings yet 😢</p>
+{% endfor %}
+```
+
+</div>
+
+</body>
+</html>

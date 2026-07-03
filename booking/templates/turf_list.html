@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turfs</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+        }
+
+        .card {
+            border-radius: 15px;
+            transition: 0.3s;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark bg-dark px-4 py-3">
+    <span class="navbar-brand">🌿 Turf Booking</span>
+
+    <div>
+        <a class="btn btn-light me-2" href="/">Dashboard</a>
+        <a class="btn btn-primary me-2" href="/turfs/">Turfs</a>
+        <a class="btn btn-danger" href="/logout/">Logout</a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-5">✨ Available Turfs ✨</h2>
+
+    <div class="row justify-content-center">
+
+        {% for turf in turfs %}
+        <div class="col-md-4">
+            <div class="card p-3 text-center shadow mb-4">
+
+                <!-- ✅ IMAGE START -->
+                {% if turf.name == "Cricket" %}
+                    <img src="{% static 'images/Cricket.webp' %}">
+                {% elif turf.name == "Football" %}
+                    <img src="{% static 'images/Football.jpeg' %}">
+                {% elif turf.name == "Badminton" %}
+                    <img src="{% static 'images/Badminton.webp' %}">
+                {% elif turf.name == "BasketBall" %}
+                    <img src="{% static 'images/Basketball.jpg' %}">
+                {% elif turf.name == "Volley Ball" %}
+                    <img src="{% static 'images/volleyball.jpg' %}">
+                {% elif turf.name == "Hockey" %}
+                    <img src="{% static 'images/hockey.webp' %}">
+                {% else %}
+                    <img src="{% static 'images/default.jpg' %}">
+                {% endif %}
+                <!-- ✅ IMAGE END -->
+
+                <h4 class="mt-3">{{ turf.name }}</h4>
+                <p class="text-muted">{{ turf.location }}</p>
+                <h5 class="text-primary">₹{{ turf.price }}/hour</h5>
+
+                <a class="btn btn-primary mt-3" href="/slots/{{ turf.id }}">View Slots 💫</a>
+                <a class="btn btn-light mt-2" href="/my-bookings/">My Bookings 📅</a>
+                <a href="/payments/" class="btn btn-dark mt-2">My Payments 💳</a>
+
+            </div>
+        </div>
+
+        {% empty %}
+        <p class="text-center">No turfs available</p>
+        {% endfor %}
+
+    </div>
+</div>
+
+</body>
+</html>

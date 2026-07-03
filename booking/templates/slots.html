@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Slots</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<!-- Notification -->
+{% if messages %}
+    {% for message in messages %}
+        <div id="msg" class="alert alert-{{ message.tags }} text-center">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<script>
+setTimeout(() => {
+    let msg = document.getElementById('msg');
+    if(msg){ msg.style.display = 'none'; }
+}, 3000);
+</script>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">💫 Slots for {{ turf.name }}</h2>
+
+    {% for slot in slots %}
+    <div class="card p-3 mb-3 shadow d-flex justify-content-between flex-row">
+
+        <div>
+            <strong>{{ slot.date }}</strong><br>
+            {{ slot.time }}
+        </div>
+
+        {% if not slot.is_booked %}
+            <a class="btn btn-success" href="/payment/{{ slot.id }}">Pay & Book 💳</a>
+        {% else %}
+            <span class="badge bg-danger p-2">Booked ❌</span>
+        {% endif %}
+
+    </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>
